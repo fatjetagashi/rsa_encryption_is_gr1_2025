@@ -1,0 +1,5 @@
+-Implement RSA encryption of both files and input as text via terminal
+-Parser should be implemented
+-Implement an inputParser
+-Implement a textFileParser
+-Defining an interface for the parser
