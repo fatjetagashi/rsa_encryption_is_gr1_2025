@@ -1,13 +1,14 @@
-package org.example;
+package org.example.parsers;
 
 import java.util.Scanner;
 
-public class InputHandler {
-    public static void main(String[] args) {
+public final class InputParser {
+
+    public String parse() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter text to encrypt: ");
         String text = scanner.nextLine();
-        System.out.println("Text received: " + text);
-        scanner.close();
+
+        return text;
     }
 }
