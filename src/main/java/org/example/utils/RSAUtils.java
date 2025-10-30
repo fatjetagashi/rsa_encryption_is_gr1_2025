@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import java.security.PrivateKey;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -39,6 +40,18 @@ public final class RSAUtils {
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException("RSA encryption failed", e);
+        }
+    }
+
+    public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey) {
+        try {
+            byte[] ct = Base64.getDecoder().decode(base64Ciphertext);
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] pt = cipher.doFinal(ct);
+            return new String(pt, StandardCharsets.UTF_8);
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            throw new RuntimeException("RSA decryption failed (is the ciphertext Base64 and matching the transformation?)", e);
         }
     }
 }
