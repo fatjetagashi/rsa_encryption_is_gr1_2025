@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +12,7 @@ import java.util.Base64;
 
 public final class RSAUtils {
 
-    public static final int DEFAULT_KEY_SIZE = 1024;//2048
+    public static final int DEFAULT_KEY_SIZE = 2048;
     public static final String TRANSFORMATION = "RSA/ECB/PKCS1Padding";
 
     private RSAUtils() {
@@ -31,16 +32,27 @@ public final class RSAUtils {
         }
     }
 
-    public static String encryptToBase64(String plainText, PublicKey publicKey) {
+    public static String encryptToBase64(String plainText, PublicKey publicKey, Charset charset) {
         try {
+            if (charset == null) {
+                charset = StandardCharsets.UTF_8;
+            }
+
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] inputBytes = plainText.getBytes(StandardCharsets.UTF_8);
+
+            byte[] inputBytes = plainText.getBytes(charset);
             byte[] encrypted = cipher.doFinal(inputBytes);
+
             return Base64.getEncoder().encodeToString(encrypted);
+
         } catch (GeneralSecurityException e) {
             throw new RuntimeException("RSA encryption failed", e);
         }
+    }
+
+    public static String encryptToBase64(String plainText, PublicKey publicKey) {
+        return encryptToBase64(plainText, publicKey, StandardCharsets.UTF_8);
     }
 
     public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey) {
