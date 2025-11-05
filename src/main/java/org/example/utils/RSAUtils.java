@@ -55,15 +55,23 @@ public final class RSAUtils {
         return encryptToBase64(plainText, publicKey, StandardCharsets.UTF_8);
     }
 
-    public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey) {
+    public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey, Charset charset) {
         try {
+            if (charset == null) {
+              charset = StandardCharsets.UTF_8;
+            }
+
             byte[] ct = Base64.getDecoder().decode(base64Ciphertext);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] pt = cipher.doFinal(ct);
-            return new String(pt, StandardCharsets.UTF_8);
+            return new String(pt, charset);
         } catch (GeneralSecurityException | IllegalArgumentException e) {
             throw new RuntimeException("RSA decryption failed (is the ciphertext Base64 and matching the transformation?)", e);
         }
+    }
+
+    public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey) {
+       return decryptFromBase64(base64Ciphertext, privateKey, StandardCharsets.UTF_8);
     }
 }

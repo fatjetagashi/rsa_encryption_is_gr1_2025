@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 public final class DirectoryFilePicker {
   private final Scanner sc;
 
-  /** Pass in your existing Scanner(System.in) so you control lifecycle. */
-
   public DirectoryFilePicker(Scanner sc) {
     this.sc = sc;
   }
@@ -19,18 +17,9 @@ public final class DirectoryFilePicker {
     if (dir == null) dir = Path.of(".");
     if (!Files.isDirectory(dir)) throw new NoSuchFileException("Not a directory: " + dir);
 
-    Set<String> exts = Arrays.stream(extensions)
-        .filter(Objects::nonNull)
-        .map(s -> s.toLowerCase(Locale.ROOT))
-        .collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<String> exts = FileUtils.getExtensions(extensions);
 
-    List<Path> files;
-    try (Stream<Path> s = Files.list(dir)) {
-      files = s.filter(Files::isRegularFile)
-          .filter(p -> exts.isEmpty() || exts.contains(extOf(p)))
-          .sorted(Comparator.comparing(p -> p.getFileName().toString().toLowerCase(Locale.ROOT)))
-          .toList();
-    }
+    List<Path> files = FileUtils.getFiles(dir, exts);
 
     if (files.isEmpty()) {
       System.out.println("[Empty] No matching files in: " + dir.toAbsolutePath());
@@ -42,7 +31,7 @@ public final class DirectoryFilePicker {
       Path p = files.get(i);
       long size = Files.size(p);
       System.out.printf(Locale.ROOT, "[%d] %s (%s)%n",
-          i + 1, p.getFileName(), humanBytes(size));
+          i + 1, p.getFileName(), FileUtils.getFileSize(size));
     }
     System.out.println("[0] Cancel");
 
@@ -59,17 +48,5 @@ public final class DirectoryFilePicker {
     }
   }
 
-  private static String extOf(Path p) {
-    String name = p.getFileName().toString();
-    int dot = name.lastIndexOf('.');
-    return dot == -1 ? "" : name.substring(dot + 1).toLowerCase(Locale.ROOT);
-  }
 
-  private static String humanBytes(long b) {
-    String[] u = {"B","KB","MB","GB","TB"};
-    int i = 0;
-    double x = b;
-    while (x >= 1024 && i < u.length - 1) { x /= 1024; i++; }
-    return String.format(Locale.ROOT, "%.1f %s", x, u[i]);
-  }
 }
