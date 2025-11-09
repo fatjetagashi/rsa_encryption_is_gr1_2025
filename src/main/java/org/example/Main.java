@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 public final class Main {
@@ -17,8 +19,28 @@ public final class Main {
         Scanner sc = new Scanner(System.in);
         try {
             System.out.println("=== RSA Encryption Project ===");
-            KeyPair keyPair = RSAUtils.generateKeyPair();
+
+            Path keyDir = Path.of("data", "keys");
+            Files.createDirectories(keyDir);
+            Path publicKeyPath = keyDir.resolve("public.key");
+            Path privateKeyPath = keyDir.resolve("private.key");
+
+            KeyPair keyPair;
+
+            if (!Files.exists(publicKeyPath) || !Files.exists(privateKeyPath)) {
+                System.out.println("No RSA keys found. Generating new key pair...");
+                keyPair = RSAUtils.generateKeyPair();
+                RSAUtils.saveKeyToFile(keyPair.getPublic(), publicKeyPath);
+                RSAUtils.saveKeyToFile(keyPair.getPrivate(), privateKeyPath);
+            } else {
+                System.out.println("Loading RSA keys from disk...");
+                PublicKey publicKey = RSAUtils.loadPublicKey(publicKeyPath);
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(privateKeyPath);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+
             boolean running = true;
+
             while (running) {
                 printMenu();
                 int choice = readChoice(sc);

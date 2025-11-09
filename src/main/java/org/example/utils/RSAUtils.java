@@ -1,13 +1,14 @@
 package org.example.utils;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.PrivateKey;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.*;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public final class RSAUtils {
@@ -74,4 +75,33 @@ public final class RSAUtils {
     public static String decryptFromBase64(String base64Ciphertext, PrivateKey privateKey) {
        return decryptFromBase64(base64Ciphertext, privateKey, StandardCharsets.UTF_8);
     }
+
+    public static void saveKeyToFile(Key key, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
+        Files.write(path, key.getEncoded());
+    }
+
+    public static PublicKey loadPublicKey(Path path) {
+        try {
+            byte[] bytes = Files.readAllBytes(path);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(bytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePublic(spec);
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException("Failed to load public key from " + path, e);
+        }
+    }
+
+    public static PrivateKey loadPrivateKey(Path path) {
+        try {
+            byte[] bytes = Files.readAllBytes(path);
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(bytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(spec);
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException("Failed to load private key from " + path, e);
+        }
+    }
+
+
 }
