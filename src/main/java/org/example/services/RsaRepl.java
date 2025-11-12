@@ -35,6 +35,10 @@ public class RsaRepl {
           case 2 -> actions.encryptFromFile(keyPair);
           case 3 -> actions.decryptFromTerminal(keyPair);
           case 4 -> actions.decryptFromFile(keyPair);
+          case 5 -> actions.encryptLargeFromTerminal(keyPair);
+          case 6 -> actions.encryptLargeFromFile(keyPair);
+          case 7 -> actions.decryptLargeFromTerminal(keyPair);
+          case 8 -> actions.decryptLargeFromFile(keyPair);
           case 9 -> actions.encryptFromTerminalWithCustomPublicKey();
           case 10 -> actions.decryptFromTerminalWithCustomPrivateKey();
           case 0 -> {
@@ -60,6 +64,10 @@ public class RsaRepl {
     System.out.println("  2) Encrypt text from a file in data/input (single block)");
     System.out.println("  3) Decrypt ciphertext (Base64) from terminal (single block)");
     System.out.println("  4) Decrypt ciphertext from a file in data/output (single block)");
+    System.out.println("  5) Encrypt LARGE text from terminal (chunked RSA)");
+    System.out.println("  6) Encrypt LARGE text from file (chunked RSA)");
+    System.out.println("  7) Decrypt LARGE ciphertext from terminal (chunked RSA)");
+    System.out.println("  8) Decrypt LARGE ciphertext from file (chunked RSA)");
     System.out.println("  9) Encrypt from terminal with custom PUBLIC key");
     System.out.println("  10) Decrypt from terminal with custom PRIVATE key");
     System.out.println("  0) Exit");

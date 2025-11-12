@@ -87,6 +87,93 @@ public final class RSAUtils {
     return decryptFromBase64(base64Ciphertext, privateKey, StandardCharsets.UTF_8);
   }
 
+  public static String encryptLargeToBase64(String plainText,
+      PublicKey publicKey,
+      Charset charset) {
+    try {
+      if (charset == null) {
+        charset = StandardCharsets.UTF_8;
+      }
+      if (transformation == null || transformation.isBlank()) {
+        transformation = DEFAULT_TRANSFORMATION;
+      }
+
+      byte[] input = plainText.getBytes(charset);
+
+      Cipher cipher = Cipher.getInstance(transformation);
+      cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+      int keySizeBytes = ((RSAPublicKey) publicKey).getModulus().bitLength() / 8;
+      int maxPlainBlockSize = maxPlainBlockSize(keySizeBytes, transformation);
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+      for (int offset = 0; offset < input.length; offset += maxPlainBlockSize) {
+        int len = Math.min(maxPlainBlockSize, input.length - offset);
+        byte[] block = cipher.doFinal(input, offset, len);
+        baos.write(block);
+      }
+
+      byte[] allEncrypted = baos.toByteArray();
+      return Base64.getEncoder().encodeToString(allEncrypted);
+
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException("RSA chunked encryption failed", e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static String encryptLargeToBase64(String plainText,
+      PublicKey publicKey) {
+    return encryptLargeToBase64(plainText, publicKey, StandardCharsets.UTF_8);
+  }
+
+  public static String decryptLargeFromBase64(String base64Ciphertext,
+      PrivateKey privateKey,
+      Charset charset) {
+    try {
+      if (charset == null) {
+        charset = StandardCharsets.UTF_8;
+      }
+      if (transformation == null || transformation.isBlank()) {
+        transformation = DEFAULT_TRANSFORMATION;
+      }
+
+      byte[] data = Base64.getDecoder().decode(base64Ciphertext);
+
+      Cipher cipher = Cipher.getInstance(transformation);
+      cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+      int keySizeBytes = ((RSAPrivateKey) privateKey).getModulus().bitLength() / 8;
+
+      if (data.length % keySizeBytes != 0) {
+        throw new IllegalArgumentException(
+            "Ciphertext length (" + data.length + ") is not a multiple of block size ("
+                + keySizeBytes + ")"
+        );
+      }
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+      for (int offset = 0; offset < data.length; offset += keySizeBytes) {
+        byte[] block = cipher.doFinal(data, offset, keySizeBytes);
+        baos.write(block);
+      }
+
+      return baos.toString(charset);
+
+    } catch (GeneralSecurityException | IllegalArgumentException | IOException e) {
+      throw new RuntimeException("RSA chunked decryption failed", e);
+    }
+  }
+
+  public static String decryptLargeFromBase64(String base64Ciphertext,
+      PrivateKey privateKey) {
+    return decryptLargeFromBase64(base64Ciphertext, privateKey, StandardCharsets.UTF_8);
+  }
+
+
   public static PublicKey decodePublicKeyFromBase64(String base64) {
     try {
       byte[] bytes = Base64.getDecoder().decode(base64);
