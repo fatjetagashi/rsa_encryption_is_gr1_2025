@@ -47,6 +47,4 @@ public final class DirectoryFilePicker {
       System.out.println("Out of range. Try again.");
     }
   }
-
-
 }

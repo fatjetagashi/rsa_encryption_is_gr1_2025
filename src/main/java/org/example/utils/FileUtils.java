@@ -48,6 +48,4 @@ public class FileUtils {
     }
     return String.format(Locale.ROOT, "%.1f %s", x, u[i]);
   }
-
-
 }
