@@ -127,8 +127,11 @@ These design decisions help demonstrate the internal mechanisms of RSA and give 
 
 Below is the UML diagram representing the main structure and flow of the RSA encryption system:
 
-![System Architecture](diagram.png)
-*Figure 1: System Architecture UML Diagram for the RSA Encryption Application*
+<p align="center">
+  <img src="diagram.png" width="750"><br>
+  <em>Figure 1: System Architecture UML Diagram for the RSA Encryption Application</em>
+</p>
+
 
 ---
 
