@@ -1,0 +1,59 @@
+@startuml
+
+class Main {
+  +main(String[])
+}
+
+class RsaRepl {
+  -Scanner sc
+  -RsaActions actions
+  +run(KeyPair)
+}
+
+class RsaActions {
+  -Scanner sc
+  -DirectoryFilePicker picker
+  +encryptFromTerminal(KeyPair)
+  +encryptFromFile(KeyPair)
+  +decryptFromTerminal(KeyPair)
+  +decryptFromFile(KeyPair)
+  +encryptLargeFromTerminal(KeyPair)
+  +encryptLargeFromFile(KeyPair)
+  +decryptLargeFromTerminal(KeyPair)
+  +decryptLargeFromFile(KeyPair)
+}
+
+class RSAUtils {
+  +generateKeyPair(int)
+  +saveKeyToFile(Key, Path)
+  +loadPublicKey(Path)
+  +loadPrivateKey(Path)
+  +encryptToBase64(String, PublicKey)
+  +decryptFromBase64(String, PrivateKey)
+  +encryptLargeToBase64(String, PublicKey)
+  +decryptLargeFromBase64(String, PrivateKey)
+}
+
+class KeyStoreService {
+  -publicKeyPath
+  -privateKeyPath
+  -keyDir
+  +loadOrCreate(int)
+}
+
+class ConfigRepl {
+  +Config readConfig()
+}
+
+class DirectoryFilePicker {
+  +Path chooseFile(Path, String)
+}
+
+Main --> RsaRepl
+RsaRepl --> RsaActions
+RsaActions --> RSAUtils
+Main --> KeyStoreService
+Main --> ConfigRepl
+RsaActions --> DirectoryFilePicker
+
+@enduml
