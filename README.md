@@ -6,7 +6,7 @@
       <p>Fakulteti i Inxhinierisë Elektrike dhe Kompjuterike</p>
       <p>Inxhinieri Kompjuterike dhe Softuerike - Programi Master</p>
       <p>Profesori: Prof. Dr. Blerim REXHA</p> 
-      <p>Asistenti: PhD.c Mërgim H. HOTI</p>
+      <p>Asistenti: Dr. Sc. Mërgim H. HOTI</p>
       <p>Lënda: Sigurimi i Informacionit</p>
     </td>
  </tr>
@@ -128,7 +128,7 @@ These design decisions help demonstrate the internal mechanisms of RSA and give 
 Below is the UML diagram representing the main structure and flow of the RSA encryption system:
 
 <p align="center">
-  <img src="diagram.png" width="750"><br>
+  <img src="uml.png"><br>
   <em>Figure 1: System Architecture UML Diagram for the RSA Encryption Application</em>
 </p>
 
@@ -160,7 +160,7 @@ mvn exec:java -Dexec.mainClass=org.example.Main
 
 - **Professor / Course Instructor:** _Prof. Dr. Blerim REXHA_ — for providing the theoretical foundations of cryptography and information security that guided the development of this RSA-based encryption system.
 
-- **Assistant:** _PhD.c Mërgim H. HOTI_ — for continuous support, guidance, and clarification throughout the project, especially regarding secure implementation practices and cryptographic workflows.
+- **Assistant:** _Dr. Sc. Mërgim H. HOTI_ — for continuous support, guidance, and clarification throughout the project, especially regarding secure implementation practices and cryptographic workflows.
 
 - Everyone on the project team.
 
