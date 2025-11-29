@@ -1,5 +1,7 @@
 package org.example.services;
 
+import static org.example.utils.AppLogger.LOG;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -26,13 +28,13 @@ public class KeyStoreService {
       KeyPair keyPair;
 
       if (!Files.exists(publicKeyPath) || !Files.exists(privateKeyPath)) {
-        System.out.println("No RSA keys found. Generating new key pair...");
+        LOG.info("No RSA keys found. Generating new key pair...");
         keyPair = RSAUtils.generateKeyPair(keySize);
         RSAUtils.saveKeyToFile(keyPair.getPublic(), publicKeyPath);
         RSAUtils.saveKeyToFile(keyPair.getPrivate(), privateKeyPath);
         return keyPair;
       }
-      System.out.println("Loading RSA keys from disk...");
+      LOG.info("Loading RSA keys from disk...");
       PublicKey publicKey = RSAUtils.loadPublicKey(publicKeyPath);
       PrivateKey privateKey = RSAUtils.loadPrivateKey(privateKeyPath);
       return new KeyPair(publicKey, privateKey);

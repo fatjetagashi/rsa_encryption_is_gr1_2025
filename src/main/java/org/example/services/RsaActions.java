@@ -1,5 +1,7 @@
 package org.example.services;
 
+import static org.example.utils.AppLogger.LOG;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,217 +25,217 @@ public class RsaActions {
     this.sc = sc; this.picker = picker;
   }
   public void encryptFromTerminal(KeyPair keyPair){
-    System.out.println();
-    System.out.println("--- Encrypt from terminal (single block) ---");
+    LOG.info("");
+    LOG.info("--- Encrypt from terminal (single block) ---");
     InputParser parser = new InputParser(sc);
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      System.out.println("No text provided.");
+      LOG.info("No text provided.");
       return;
     }
     String cipherBase64 = RSAUtils.encryptToBase64(plainText, keyPair.getPublic());
-    System.out.println("\nEncrypted (Base64):");
-    System.out.println(cipherBase64);
+    LOG.info("\nEncrypted (Base64):");
+    LOG.info(cipherBase64);
     String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
-    System.out.println("\nDecrypted (for verification):");
-    System.out.println(decrypted);
+    LOG.info("\nDecrypted (for verification):");
+    LOG.info(decrypted);
   }
 
   public void encryptFromFile(KeyPair keyPair) throws IOException{
-    System.out.println();
-    System.out.println("--- Encrypt from file (single block) ---");
+    LOG.info("");
+    LOG.info("--- Encrypt from file (single block) ---");
     if (!Files.isDirectory(inputDir)) {
-      System.out.println("Input directory does not exist: " + inputDir.toAbsolutePath());
+      LOG.info("Input directory does not exist: " + inputDir.toAbsolutePath());
       return;
     }
     Path chosen = picker.chooseFile(inputDir, "txt");
     if (chosen == null) {
-      System.out.println("No file selected.");
+      LOG.info("No file selected.");
       return;
     }
     FileInputParser fileParser = new FileInputParser(chosen);
     String plainText = fileParser.parseString();
-    System.out.println("\n--- Plaintext from file ---");
-    System.out.println(plainText);
+    LOG.info("\n--- Plaintext from file ---");
+    LOG.info(plainText);
     String cipherBase64 = RSAUtils.encryptToBase64(plainText, keyPair.getPublic());
-    System.out.println("\nEncrypted (Base64):");
-    System.out.println(cipherBase64);
+    LOG.info("\nEncrypted (Base64):");
+    LOG.info(cipherBase64);
     Files.createDirectories(outputDir);
     Path outFile = outputDir.resolve(chosen.getFileName().toString() + ".enc");
     Files.writeString(outFile, cipherBase64);
-    System.out.println("\nEncrypted text was written to: " + outFile.toAbsolutePath());
+    LOG.info("\nEncrypted text was written to: " + outFile.toAbsolutePath());
   }
 
   public void decryptFromTerminal(KeyPair keyPair) {
-    System.out.println();
-    System.out.println("--- Decrypt from terminal (single block) ---");
+    LOG.info("");
+    LOG.info("--- Decrypt from terminal (single block) ---");
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      System.out.println("No ciphertext provided.");
+      LOG.info("No ciphertext provided.");
       return;
     }
     try {
       String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
-      System.out.println("\nDecrypted plaintext:");
-      System.out.println(decrypted);
+      LOG.info("\nDecrypted plaintext:");
+      LOG.info(decrypted);
     } catch (RuntimeException e) {
-      System.out.println("Failed to decrypt: " + e.getMessage());
+      LOG.info("Failed to decrypt: " + e.getMessage());
     }
   }
 
   public void decryptFromFile(KeyPair keyPair) throws IOException {
-    System.out.println();
-    System.out.println("--- Decrypt from file (single block) ---");
+    LOG.info("");
+    LOG.info("--- Decrypt from file (single block) ---");
     if (!Files.isDirectory(outputDir)) {
-      System.out.println("Output directory does not exist: " + outputDir.toAbsolutePath());
+      LOG.info("Output directory does not exist: " + outputDir.toAbsolutePath());
       return;
     }
     Path chosen = picker.chooseFile(outputDir, "enc");
     if (chosen == null) {
-      System.out.println("No file selected.");
+      LOG.info("No file selected.");
       return;
     }
     String cipherBase64 = Files.readString(chosen);
     String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
-    System.out.println("\nDecrypted plaintext:");
-    System.out.println(decrypted);
+    LOG.info("\nDecrypted plaintext:");
+    LOG.info(decrypted);
   }
 
   public void decryptFromTerminalWithCustomPrivateKey() {
-    System.out.println();
-    System.out.println("--- Decrypt from terminal with custom PRIVATE key ---");
+    LOG.info("");
+    LOG.info("--- Decrypt from terminal with custom PRIVATE key ---");
 
     System.out.print("Paste Base64-encoded PRIVATE key: ");
     String privB64 = sc.nextLine().trim();
     if (privB64.isEmpty()) {
-      System.out.println("No private key provided.");
+      LOG.info("No private key provided.");
       return;
     }
 
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      System.out.println("No ciphertext provided.");
+      LOG.info("No ciphertext provided.");
       return;
     }
 
     try {
       PrivateKey privateKey = RSAUtils.decodePrivateKeyFromBase64(privB64);
       String decrypted = RSAUtils.decryptFromBase64(cipherBase64, privateKey);
-      System.out.println("\nDecrypted plaintext:");
-      System.out.println(decrypted);
+      LOG.info("\nDecrypted plaintext:");
+      LOG.info(decrypted);
     } catch (RuntimeException e) {
-      System.out.println("Failed to decrypt: " + e.getMessage());
+      LOG.info("Failed to decrypt: " + e.getMessage());
     }
   }
 
   public void encryptFromTerminalWithCustomPublicKey() {
-    System.out.println();
-    System.out.println("--- Encrypt from terminal with custom PUBLIC key ---");
+    LOG.info("");
+    LOG.info("--- Encrypt from terminal with custom PUBLIC key ---");
 
     System.out.print("Paste Base64-encoded PUBLIC key: ");
     String pubB64 = sc.nextLine().trim();
     if (pubB64.isEmpty()) {
-      System.out.println("No public key provided.");
+      LOG.info("No public key provided.");
       return;
     }
 
     InputParser parser = new InputParser(sc);
-    System.out.println("Enter plaintext to encrypt (end with empty line):");
+    LOG.info("Enter plaintext to encrypt (end with empty line):");
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      System.out.println("No text provided.");
+      LOG.info("No text provided.");
       return;
     }
 
     try {
       PublicKey publicKey = RSAUtils.decodePublicKeyFromBase64(pubB64);
       String cipherBase64 = RSAUtils.encryptToBase64(plainText, publicKey);
-      System.out.println("\nEncrypted (Base64):");
-      System.out.println(cipherBase64);
+      LOG.info("\nEncrypted (Base64):");
+      LOG.info(cipherBase64);
     } catch (RuntimeException e) {
-      System.out.println("Failed to encrypt: " + e.getMessage());
+      LOG.info("Failed to encrypt: " + e.getMessage());
     }
   }
 
   public void encryptLargeFromTerminal(KeyPair keyPair){
-    System.out.println();
-    System.out.println("--- Encrypt LARGE text from terminal (chunked RSA) ---");
+    LOG.info("");
+    LOG.info("--- Encrypt LARGE text from terminal (chunked RSA) ---");
     InputParser parser = new InputParser(sc);
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      System.out.println("No text provided.");
+      LOG.info("No text provided.");
       return;
     }
     String cipherBase64 = RSAUtils.encryptLargeToBase64(plainText, keyPair.getPublic());
-    System.out.println("\nEncrypted (Base64, chunked):");
-    System.out.println(cipherBase64);
+    LOG.info("\nEncrypted (Base64, chunked):");
+    LOG.info(cipherBase64);
 
     // Optional verification
     String decrypted = RSAUtils.decryptLargeFromBase64(cipherBase64, keyPair.getPrivate());
-    System.out.println("\nDecrypted (for verification, chunked):");
-    System.out.println(decrypted);
+    LOG.info("\nDecrypted (for verification, chunked):");
+    LOG.info(decrypted);
   }
 
   public void encryptLargeFromFile(KeyPair keyPair) throws IOException{
-    System.out.println();
-    System.out.println("--- Encrypt LARGE text from file (chunked RSA) ---");
+    LOG.info("");
+    LOG.info("--- Encrypt LARGE text from file (chunked RSA) ---");
     if (!Files.isDirectory(inputDir)) {
-      System.out.println("Input directory does not exist: " + inputDir.toAbsolutePath());
+      LOG.info("Input directory does not exist: " + inputDir.toAbsolutePath());
       return;
     }
     Path chosen = picker.chooseFile(inputDir, "txt");
     if (chosen == null) {
-      System.out.println("No file selected.");
+      LOG.info("No file selected.");
       return;
     }
     FileInputParser fileParser = new FileInputParser(chosen);
     String plainText = fileParser.parseString();
-    System.out.println("\n--- Plaintext from file ---");
-    System.out.println(plainText);
+    LOG.info("\n--- Plaintext from file ---");
+    LOG.info(plainText);
     String cipherBase64 = RSAUtils.encryptLargeToBase64(plainText, keyPair.getPublic());
-    System.out.println("\nEncrypted (Base64, chunked):");
-    System.out.println(cipherBase64);
+    LOG.info("\nEncrypted (Base64, chunked):");
+    LOG.info(cipherBase64);
     Files.createDirectories(outputDir);
     Path outFile = outputDir.resolve(chosen.getFileName().toString() + ".large.enc");
     Files.writeString(outFile, cipherBase64);
-    System.out.println("\nEncrypted text was written to: " + outFile.toAbsolutePath());
+    LOG.info("\nEncrypted text was written to: " + outFile.toAbsolutePath());
   }
 
   public void decryptLargeFromTerminal(KeyPair keyPair) {
-    System.out.println();
-    System.out.println("--- Decrypt LARGE ciphertext from terminal (chunked RSA) ---");
+    LOG.info("");
+    LOG.info("--- Decrypt LARGE ciphertext from terminal (chunked RSA) ---");
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      System.out.println("No ciphertext provided.");
+      LOG.info("No ciphertext provided.");
       return;
     }
     try {
       String decrypted = RSAUtils.decryptLargeFromBase64(cipherBase64, keyPair.getPrivate());
-      System.out.println("\nDecrypted plaintext (chunked):");
-      System.out.println(decrypted);
+      LOG.info("\nDecrypted plaintext (chunked):");
+      LOG.info(decrypted);
     } catch (RuntimeException e) {
-      System.out.println("Failed to decrypt: " + e.getMessage());
+      LOG.info("Failed to decrypt: " + e.getMessage());
     }
   }
 
   public void decryptLargeFromFile(KeyPair keyPair) throws IOException {
-    System.out.println();
-    System.out.println("--- Decrypt LARGE ciphertext from file (chunked RSA) ---");
+    LOG.info("");
+    LOG.info("--- Decrypt LARGE ciphertext from file (chunked RSA) ---");
     if (!Files.isDirectory(outputDir)) {
-      System.out.println("Output directory does not exist: " + outputDir.toAbsolutePath());
+      LOG.info("Output directory does not exist: " + outputDir.toAbsolutePath());
       return;
     }
     Path chosen = picker.chooseFile(outputDir, "enc");
     if (chosen == null) {
-      System.out.println("No file selected.");
+      LOG.info("No file selected.");
       return;
     }
     String cipherBase64 = Files.readString(chosen);
     String decrypted = RSAUtils.decryptLargeFromBase64(cipherBase64, keyPair.getPrivate());
-    System.out.println("\nDecrypted plaintext (chunked):");
-    System.out.println(decrypted);
+    LOG.info("\nDecrypted plaintext (chunked):");
+    LOG.info(decrypted);
   }
 }

@@ -1,5 +1,7 @@
 package org.example;
 
+import static org.example.utils.AppLogger.LOG;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.Base64;
@@ -18,10 +20,10 @@ public class KeyGeneratorScript{
     String privateKeyBase64 = Base64.getEncoder()
             .encodeToString(keyPair.getPrivate().getEncoded());
 
-    System.out.println("Public key (Base64, 2048-bit):");
-    System.out.println(publicKeyBase64);
-    System.out.println();
-    System.out.println("Private key (Base64, 2048-bit):");
-    System.out.println(privateKeyBase64);
+    LOG.info("Public key (Base64, 2048-bit):");
+    LOG.info(publicKeyBase64);
+    LOG.info("");
+    LOG.info("Private key (Base64, 2048-bit):");
+    LOG.info(privateKeyBase64);
   }
 }

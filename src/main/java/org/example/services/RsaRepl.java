@@ -1,6 +1,8 @@
 package org.example.services;
 
 
+import static org.example.utils.AppLogger.LOG;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,10 +44,10 @@ public class RsaRepl {
           case 9 -> actions.encryptFromTerminalWithCustomPublicKey();
           case 10 -> actions.decryptFromTerminalWithCustomPrivateKey();
           case 0 -> {
-            System.out.println("Exiting...");
+            LOG.info("Exiting...");
             running = false;
           }
-          default -> System.out.println("Invalid option. Please choose again.");
+          default -> LOG.info("Invalid option. Please choose again.");
         }
       }
     } catch (IOException e) {
@@ -58,19 +60,19 @@ public class RsaRepl {
   }
 
   private void printMenu() {
-    System.out.println();
-    System.out.println("Choose an option:");
-    System.out.println("  1) Encrypt text from terminal input (single block)");
-    System.out.println("  2) Encrypt text from a file in data/input (single block)");
-    System.out.println("  3) Decrypt ciphertext (Base64) from terminal (single block)");
-    System.out.println("  4) Decrypt ciphertext from a file in data/output (single block)");
-    System.out.println("  5) Encrypt LARGE text from terminal (chunked RSA)");
-    System.out.println("  6) Encrypt LARGE text from file (chunked RSA)");
-    System.out.println("  7) Decrypt LARGE ciphertext from terminal (chunked RSA)");
-    System.out.println("  8) Decrypt LARGE ciphertext from file (chunked RSA)");
-    System.out.println("  9) Encrypt from terminal with custom PUBLIC key");
-    System.out.println("  10) Decrypt from terminal with custom PRIVATE key");
-    System.out.println("  0) Exit");
+    LOG.info("");
+    LOG.info("Choose an option:");
+    LOG.info("  1) Encrypt text from terminal input (single block)");
+    LOG.info("  2) Encrypt text from a file in data/input (single block)");
+    LOG.info("  3) Decrypt ciphertext (Base64) from terminal (single block)");
+    LOG.info("  4) Decrypt ciphertext from a file in data/output (single block)");
+    LOG.info("  5) Encrypt LARGE text from terminal (chunked RSA)");
+    LOG.info("  6) Encrypt LARGE text from file (chunked RSA)");
+    LOG.info("  7) Decrypt LARGE ciphertext from terminal (chunked RSA)");
+    LOG.info("  8) Decrypt LARGE ciphertext from file (chunked RSA)");
+    LOG.info("  9) Encrypt from terminal with custom PUBLIC key");
+    LOG.info("  10) Decrypt from terminal with custom PRIVATE key");
+    LOG.info("  0) Exit");
     System.out.print("Option: ");
   }
 

@@ -1,5 +1,7 @@
 package org.example.services;
 
+import static org.example.utils.AppLogger.LOG;
+
 import org.example.utils.RSAUtils;
 
 import java.util.Scanner;
@@ -15,25 +17,25 @@ public class ConfigRepl {
   }
 
   public Config readConfig() {
-    System.out.println("=== RSA configuration ===");
+    LOG.info("=== RSA configuration ===");
     int keySize = askKeySize();
     String transformation = askTransformation();
 
-    System.out.println();
-    System.out.println("Using RSA key size: " + keySize + " bits");
-    System.out.println("Using cipher transformation: " + transformation);
-    System.out.println();
+    LOG.info("");
+    LOG.info("Using RSA key size: " + keySize + " bits");
+    LOG.info("Using cipher transformation: " + transformation);
+    LOG.info("");
 
     return new Config(keySize, transformation);
   }
 
   private int askKeySize() {
     while (true) {
-      System.out.println();
-      System.out.println("Choose RSA key size:");
-      System.out.println("  1) 1024 bits (fast, but weak – not recommended)");
-      System.out.println("  2) 2048 bits (default, recommended)");
-      System.out.println("  3) 4096 bits (stronger, but slower)");
+      LOG.info("");
+      LOG.info("Choose RSA key size:");
+      LOG.info("  1) 1024 bits (fast, but weak – not recommended)");
+      LOG.info("  2) 2048 bits (default, recommended)");
+      LOG.info("  3) 4096 bits (stronger, but slower)");
       System.out.print("Option [2]: ");
 
       String line = sc.nextLine().trim();
@@ -46,17 +48,17 @@ public class ConfigRepl {
         case "", "2":
           return RSAUtils.DEFAULT_KEY_SIZE;
         default:
-          System.out.println("Unknown option, please choose 1, 2 or 3.");
+          LOG.info("Unknown option, please choose 1, 2 or 3.");
       }
     }
   }
 
   private String askTransformation() {
     while (true) {
-      System.out.println();
-      System.out.println("Choose RSA padding / transformation:");
-      System.out.println("  1) RSA/ECB/PKCS1Padding (default)");
-      System.out.println("  2) RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+      LOG.info("");
+      LOG.info("Choose RSA padding / transformation:");
+      LOG.info("  1) RSA/ECB/PKCS1Padding (default)");
+      LOG.info("  2) RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
       System.out.print("Option [1]: ");
 
       String line = sc.nextLine().trim();
@@ -67,7 +69,7 @@ public class ConfigRepl {
         case "", "1":
           return RSAUtils.DEFAULT_TRANSFORMATION;
         default:
-          System.out.println("Unknown option, please choose 1 or 2.");
+          LOG.info("Unknown option, please choose 1 or 2.");
       }
     }
   }
