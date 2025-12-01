@@ -16,6 +16,14 @@ import org.example.utils.DirectoryFilePicker;
 import org.example.utils.RSAUtils;
 
 public class RsaActions {
+
+  private static final String NO_TEXT_PROVIDED = "No text provided.";
+  private static final String ENCRYPTED_BASE64 = "\nEncrypted (Base64):";
+  private static final String NO_FILE_SELECTED = "No file selected.";
+  private static final String NO_CIPHERTEXT_PROVIDED = "No ciphertext provided.";
+  private static final String DECRYPTED_PLAINTEXT = "\nDecrypted plaintext:";
+
+
   private final Scanner sc;
   private final DirectoryFilePicker picker;
   private final Path inputDir = Path.of("data","input");
@@ -30,11 +38,11 @@ public class RsaActions {
     InputParser parser = new InputParser(sc);
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      LOG.info("No text provided.");
+      LOG.info(NO_TEXT_PROVIDED);
       return;
     }
     String cipherBase64 = RSAUtils.encryptToBase64(plainText, keyPair.getPublic());
-    LOG.info("\nEncrypted (Base64):");
+    LOG.info(ENCRYPTED_BASE64);
     LOG.info(cipherBase64);
     String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
     LOG.info("\nDecrypted (for verification):");
@@ -45,12 +53,12 @@ public class RsaActions {
     LOG.info("");
     LOG.info("--- Encrypt from file (single block) ---");
     if (!Files.isDirectory(inputDir)) {
-      LOG.info("Input directory does not exist: " + inputDir.toAbsolutePath());
+      LOG.info(String.format("Input directory does not exist: %s" , inputDir.toAbsolutePath()));
       return;
     }
     Path chosen = picker.chooseFile(inputDir, "txt");
     if (chosen == null) {
-      LOG.info("No file selected.");
+      LOG.info(NO_FILE_SELECTED);
       return;
     }
     FileInputParser fileParser = new FileInputParser(chosen);
@@ -58,12 +66,12 @@ public class RsaActions {
     LOG.info("\n--- Plaintext from file ---");
     LOG.info(plainText);
     String cipherBase64 = RSAUtils.encryptToBase64(plainText, keyPair.getPublic());
-    LOG.info("\nEncrypted (Base64):");
+    LOG.info(ENCRYPTED_BASE64);
     LOG.info(cipherBase64);
     Files.createDirectories(outputDir);
     Path outFile = outputDir.resolve(chosen.getFileName().toString() + ".enc");
     Files.writeString(outFile, cipherBase64);
-    LOG.info("\nEncrypted text was written to: " + outFile.toAbsolutePath());
+    LOG.info(String.format("\nEncrypted text was written to: %s" , outFile.toAbsolutePath()));
   }
 
   public void decryptFromTerminal(KeyPair keyPair) {
@@ -72,15 +80,15 @@ public class RsaActions {
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      LOG.info("No ciphertext provided.");
+      LOG.info(NO_CIPHERTEXT_PROVIDED);
       return;
     }
     try {
       String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
-      LOG.info("\nDecrypted plaintext:");
+      LOG.info(DECRYPTED_PLAINTEXT);
       LOG.info(decrypted);
     } catch (RuntimeException e) {
-      LOG.info("Failed to decrypt: " + e.getMessage());
+      LOG.info(String.format("Failed to decrypt: %s" , e.getMessage()));
     }
   }
 
@@ -88,17 +96,17 @@ public class RsaActions {
     LOG.info("");
     LOG.info("--- Decrypt from file (single block) ---");
     if (!Files.isDirectory(outputDir)) {
-      LOG.info("Output directory does not exist: " + outputDir.toAbsolutePath());
+      LOG.info(String.format("Output directory does not exist: %s" , outputDir.toAbsolutePath()));
       return;
     }
     Path chosen = picker.chooseFile(outputDir, "enc");
     if (chosen == null) {
-      LOG.info("No file selected.");
+      LOG.info(NO_FILE_SELECTED);
       return;
     }
     String cipherBase64 = Files.readString(chosen);
     String decrypted = RSAUtils.decryptFromBase64(cipherBase64, keyPair.getPrivate());
-    LOG.info("\nDecrypted plaintext:");
+    LOG.info(DECRYPTED_PLAINTEXT);
     LOG.info(decrypted);
   }
 
@@ -116,17 +124,17 @@ public class RsaActions {
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      LOG.info("No ciphertext provided.");
+      LOG.info(NO_CIPHERTEXT_PROVIDED);
       return;
     }
 
     try {
       PrivateKey privateKey = RSAUtils.decodePrivateKeyFromBase64(privB64);
       String decrypted = RSAUtils.decryptFromBase64(cipherBase64, privateKey);
-      LOG.info("\nDecrypted plaintext:");
+      LOG.info(DECRYPTED_PLAINTEXT);
       LOG.info(decrypted);
     } catch (RuntimeException e) {
-      LOG.info("Failed to decrypt: " + e.getMessage());
+      LOG.info(String.format("Failed to decrypt: %s" , e.getMessage()));
     }
   }
 
@@ -145,17 +153,17 @@ public class RsaActions {
     LOG.info("Enter plaintext to encrypt (end with empty line):");
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      LOG.info("No text provided.");
+      LOG.info(NO_TEXT_PROVIDED);
       return;
     }
 
     try {
       PublicKey publicKey = RSAUtils.decodePublicKeyFromBase64(pubB64);
       String cipherBase64 = RSAUtils.encryptToBase64(plainText, publicKey);
-      LOG.info("\nEncrypted (Base64):");
+      LOG.info(ENCRYPTED_BASE64);
       LOG.info(cipherBase64);
     } catch (RuntimeException e) {
-      LOG.info("Failed to encrypt: " + e.getMessage());
+      LOG.info(String.format("Failed to encrypt: %s", e.getMessage()));
     }
   }
 
@@ -165,7 +173,7 @@ public class RsaActions {
     InputParser parser = new InputParser(sc);
     String plainText = parser.parse();
     if (plainText == null || plainText.isBlank()) {
-      LOG.info("No text provided.");
+      LOG.info(NO_TEXT_PROVIDED);
       return;
     }
     String cipherBase64 = RSAUtils.encryptLargeToBase64(plainText, keyPair.getPublic());
@@ -182,12 +190,12 @@ public class RsaActions {
     LOG.info("");
     LOG.info("--- Encrypt LARGE text from file (chunked RSA) ---");
     if (!Files.isDirectory(inputDir)) {
-      LOG.info("Input directory does not exist: " + inputDir.toAbsolutePath());
+      LOG.info(String.format("Input directory does not exist: %s" , inputDir.toAbsolutePath()));
       return;
     }
     Path chosen = picker.chooseFile(inputDir, "txt");
     if (chosen == null) {
-      LOG.info("No file selected.");
+      LOG.info(NO_FILE_SELECTED);
       return;
     }
     FileInputParser fileParser = new FileInputParser(chosen);
@@ -200,7 +208,7 @@ public class RsaActions {
     Files.createDirectories(outputDir);
     Path outFile = outputDir.resolve(chosen.getFileName().toString() + ".large.enc");
     Files.writeString(outFile, cipherBase64);
-    LOG.info("\nEncrypted text was written to: " + outFile.toAbsolutePath());
+    LOG.info(String.format("\nEncrypted text was written to: %s", outFile.toAbsolutePath()));
   }
 
   public void decryptLargeFromTerminal(KeyPair keyPair) {
@@ -209,7 +217,7 @@ public class RsaActions {
     System.out.print("Paste Base64 ciphertext: ");
     String cipherBase64 = sc.nextLine().trim();
     if (cipherBase64.isEmpty()) {
-      LOG.info("No ciphertext provided.");
+      LOG.info(NO_CIPHERTEXT_PROVIDED);
       return;
     }
     try {
@@ -217,7 +225,7 @@ public class RsaActions {
       LOG.info("\nDecrypted plaintext (chunked):");
       LOG.info(decrypted);
     } catch (RuntimeException e) {
-      LOG.info("Failed to decrypt: " + e.getMessage());
+      LOG.info(String.format("Failed to decrypt: %s" , e.getMessage()));
     }
   }
 
@@ -225,12 +233,12 @@ public class RsaActions {
     LOG.info("");
     LOG.info("--- Decrypt LARGE ciphertext from file (chunked RSA) ---");
     if (!Files.isDirectory(outputDir)) {
-      LOG.info("Output directory does not exist: " + outputDir.toAbsolutePath());
+      LOG.info(String.format("Output directory does not exist: %s" , outputDir.toAbsolutePath()));
       return;
     }
     Path chosen = picker.chooseFile(outputDir, "enc");
     if (chosen == null) {
-      LOG.info("No file selected.");
+      LOG.info(NO_FILE_SELECTED);
       return;
     }
     String cipherBase64 = Files.readString(chosen);

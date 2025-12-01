@@ -24,11 +24,11 @@ public final class DirectoryFilePicker {
     List<Path> files = FileUtils.getFiles(dir, exts);
 
     if (files.isEmpty()) {
-      LOG.info("[Empty] No matching files in: " + dir.toAbsolutePath());
+      LOG.info(String.format("[Empty] No matching files in: %s" , dir.toAbsolutePath()));
       return null;
     }
 
-    LOG.info("Choose a file in: " + dir.toAbsolutePath());
+    LOG.info(String.format("Choose a file in: %s", dir.toAbsolutePath()));
     for (int i = 0; i < files.size(); i++) {
       Path p = files.get(i);
       long size = Files.size(p);

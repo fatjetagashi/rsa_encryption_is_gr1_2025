@@ -22,8 +22,8 @@ public class ConfigRepl {
     String transformation = askTransformation();
 
     LOG.info("");
-    LOG.info("Using RSA key size: " + keySize + " bits");
-    LOG.info("Using cipher transformation: " + transformation);
+    LOG.info(String.format("Using RSA key size: %s bits", keySize));
+    LOG.info(String.format("Using cipher transformation: %s" , transformation));
     LOG.info("");
 
     return new Config(keySize, transformation);
